@@ -19,8 +19,8 @@ public class LiveStocksMonitoring extends HttpServlet {
 			
 			String tradingDate = dateFormatter2.format(new Date());
 			
-			//String startTime = tradingDate + " 09:40:00";//this is original. put this back after testing.
-			String startTime = tradingDate + " 13:10:00";
+			String startTime = tradingDate + " 09:35:00";//this line is original. put this back after testing.
+			//String startTime = tradingDate + " 13:15:00";// this line is for testing only.
 			Date date = dateFormatter.parse(startTime);
 
 			Timer timer = new Timer();

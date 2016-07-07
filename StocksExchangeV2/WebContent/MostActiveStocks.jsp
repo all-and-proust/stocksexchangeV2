@@ -37,7 +37,7 @@
 		<td><%= s.getHigh() %></td>
 		<td><%= s.getLastPrice() %></td>
 		<td><%= s.getTargetPrice() %></td>
-		<td <%= (s.getPercentHowClose().doubleValue() > 0.0 && s.getPercentHowClose().doubleValue() <= 100.0 ) ? "bgcolor='green'" : "" %>><%= (s.getPercentHowClose().intValue() == -1) ? "Need More Data" : s.getPercentHowClose() %></td>
+		<td <%= (s.getPercentHowClose().doubleValue() > 0.0 && s.getPercentHowClose().doubleValue() <= 50.0 ) ? "bgcolor='green'" : "" %>><%= (s.getPercentHowClose().intValue() == -1) ? "Need More Data" : s.getPercentHowClose() %></td>
 	</tr>
 	<%
 	

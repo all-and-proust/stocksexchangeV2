@@ -491,7 +491,7 @@ public class SimpleSelect {
 			message.setFrom(new InternetAddress("test.email.july.2016@gmail.com"));
 			message.setRecipients(Message.RecipientType.TO,
 				InternetAddress.parse("bendeleonjr@hotmail.com"));
-			message.setSubject("Stocks Updates");
+			message.setSubject("Stocks Updates - 3% ROI");
 			message.setContent(tableData, "text/html" );
 
 			Transport.send(message);
@@ -526,7 +526,7 @@ public class SimpleSelect {
 		int ctr = 0;
 		for(Stock s: stocks){
 			ctr++;
-			if (s.getPercentHowClose().doubleValue() > 0.0 && s.getPercentHowClose().doubleValue() <= 100.0 ){
+			if (s.getPercentHowClose().doubleValue() > 0.0 && s.getPercentHowClose().doubleValue() <= 50.0 ){
 				htmltable = htmltable +
 						"<tr>" +
 						"<td>" + ctr + "</td>" +
