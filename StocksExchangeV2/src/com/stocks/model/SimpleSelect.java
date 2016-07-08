@@ -474,7 +474,8 @@ public class SimpleSelect {
 	public void sendStocksUpdates(){
 		
 		String tableData = buildBestBuyData(getHighFrequencyStocks());
-		final String username = "test.email.july.2016@gmail.com";
+		final String username = "test.email.july.2016@gmail.com"; // original
+		//final String username = "test.email.august.2016@gmail.com";
 		final String password = "TestAccount";
 
 		Properties props = new Properties();
@@ -488,9 +489,10 @@ public class SimpleSelect {
 		try {
 
 			Message message = new MimeMessage(session);
-			message.setFrom(new InternetAddress("test.email.july.2016@gmail.com"));
+			message.setFrom(new InternetAddress("test.email.july.2016@gmail.com"));//original
+			//message.setFrom(new InternetAddress("test.email.august.2016@gmail.com"));
 			message.setRecipients(Message.RecipientType.TO,
-				InternetAddress.parse("bendeleonjr@hotmail.com"));
+				InternetAddress.parse("benedicto.gualda.deleon@gmail.com"));
 			message.setSubject("Stocks Updates - 3% ROI");
 			message.setContent(tableData, "text/html" );
 
