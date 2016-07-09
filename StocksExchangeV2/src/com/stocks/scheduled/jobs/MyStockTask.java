@@ -5,11 +5,12 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimerTask;
 
-import com.stocks.model.SimpleSelect;
+import com.stocks.model.business.StocksBusiness;
+import com.stocks.model.business.impl.StocksBusinessImpl;
 
 public class MyStockTask extends TimerTask {
 	int ctr = 0;
-	SimpleSelect ss = new SimpleSelect();
+	StocksBusiness sb = new StocksBusinessImpl();
 	public void run(){
 		ctr++;
 		DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -40,7 +41,7 @@ public class MyStockTask extends TimerTask {
 			System.out.println("Live Stocks Monitoring is done!");
 		} else {
 			System.out.println("Interval " + ctr);
-			ss.stocksMonitoring(tradingDate);
+			sb.stocksMonitoring(tradingDate);
 		}
 		
 	}
