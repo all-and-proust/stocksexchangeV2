@@ -3,6 +3,7 @@ package com.stocks.model.business.impl;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.math.BigDecimal;
 import java.net.URL;
 import java.net.URLConnection;
 import java.text.DateFormat;
@@ -24,6 +25,7 @@ import javax.mail.internet.MimeMessage;
 
 import com.stocks.model.GMailAuthenticator;
 import com.stocks.model.Stock;
+import com.stocks.model.StockBase;
 import com.stocks.model.StockScore;
 import com.stocks.model.business.StocksBusiness;
 import com.stocks.model.dao.StocksDao;
@@ -84,9 +86,24 @@ public class StocksBusinessImpl implements StocksBusiness {
 		return stocksList;
 	}
 	
-	public void sendStocksUpdates(){
+	public void sendStocksUpdates(String tradingDate){
 		StocksDao sd = new StocksDaoImpl();
+		sd.removeData(tradingDate);
+		List<Map<String,String>> stocksList = viewDataFromPSE();
+		int importResult = sd.importData(stocksList);
+		if(importResult == 0){
+			System.out.println("Successfully imported stocks data.");
+		} else {
+			System.out.println("Import of stocks data has failed.");
+		}
+		
 		String tableData = buildBestBuyData(sd.getHighFrequencyStocks());
+		
+		Map<String,List<StockBase>> buySell= adviseBuySell(stocksList);
+		
+		String buyTableData = buildBuyStocksData(buySell.get("BUY"));
+		String sellTableData = buildSellStocksData(buySell.get("SELL"));
+		
 		final String username = "test.email.july.2016@gmail.com"; // original
 		//final String username = "test.email.august.2016@gmail.com";
 		final String password = "TestAccount";
@@ -107,7 +124,7 @@ public class StocksBusinessImpl implements StocksBusiness {
 			message.setRecipients(Message.RecipientType.TO,
 				InternetAddress.parse("benedicto.gualda.deleon@gmail.com"));
 			message.setSubject("Stocks Updates - 3% ROI");
-			message.setContent(tableData, "text/html" );
+			message.setContent(tableData + sellTableData + buyTableData, "text/html" );
 
 			Transport.send(message);
 
@@ -161,15 +178,75 @@ public class StocksBusinessImpl implements StocksBusiness {
 		return htmltable;
 	}
 
-	public void stocksMonitoring(String tradingDate){
-		StocksDao sd = new StocksDaoImpl();
-		sd.removeData(tradingDate);
-		int importResult = sd.importData(viewDataFromPSE());
-		if(importResult == 0){
-			System.out.println("Successfully imported stocks data.");
-		} else {
-			System.out.println("Import of stocks data has failed.");
+	private String buildSellStocksData(List<StockBase> sellStocks){
+		String htmltable = 
+		"<br/><table border = '1'>" +
+		"<tr>" +
+		"<td>Stock Symbol</td>" +
+		"<td>Best Bid (SELL)</td>" +
+	    "</tr>";
+		for(StockBase s: sellStocks){
+				htmltable = htmltable +
+						"<tr>" +
+						"<td>" + s.getStockSymbol() +"</td>" +
+						"<td>" + s.getLastPrice() + "</td>" +
+					    "</tr>";
 		}
-		sendStocksUpdates();
+		htmltable = htmltable + "</table>";
+		return htmltable;
+	}
+
+	private String buildBuyStocksData(List<StockBase> sellStocks){
+		String htmltable = 
+		"<br/><table border = '1'>" +
+		"<tr>" +
+		"<td>Stock Symbol</td>" +
+		"<td>Best Offer (BUY)</td>" +
+	    "</tr>";
+		for(StockBase s: sellStocks){
+				htmltable = htmltable +
+						"<tr>" +
+						"<td>" + s.getStockSymbol() +"</td>" +
+						"<td>" + s.getLastPrice() + "</td>" +
+					    "</tr>";		
+		}
+		htmltable = htmltable + "</table>";
+		return htmltable;
+	}
+
+	public Map<String,List<StockBase>> adviseBuySell(List<Map<String,String>> stocksList){
+		StocksDao sd = new StocksDaoImpl();
+		Map<String,BigDecimal> buySellMap = sd.getBuySellStocks();
+		Map<String,List<StockBase>> recommendedBuySell = new HashMap<String,List<StockBase>>();
+		List<StockBase> recommendedSell = new ArrayList<StockBase>();
+		List<StockBase> recommendedBuy = new ArrayList<StockBase>();
+		
+		for(Map<String,String> sds : stocksList){
+			if(sds.get("lastTradedPrice").equals("DATE")){
+				; // do nothing. just skip this first element of List
+	        } else {	        	
+	        	String stockSymbol = sds.get("securitySymbol");
+	        	double lastTradedPrice = Double.parseDouble(sds.get("lastTradedPrice"));
+	        	if(buySellMap.containsKey(stockSymbol+"_SELL") && lastTradedPrice >= buySellMap.get(stockSymbol+"_SELL").doubleValue()){
+	        		//sell
+	        		StockBase sb = new StockBase();
+	        		sb.setStockSymbol(stockSymbol);
+	        		sb.setLastPrice(lastTradedPrice);
+	        		recommendedSell.add(sb);
+	        	}
+	        	
+	        	if(buySellMap.containsKey(stockSymbol+"_BUY") && lastTradedPrice <= buySellMap.get(stockSymbol+"_BUY").doubleValue() * 0.97){
+	        		//buy again
+	        		StockBase sb = new StockBase();
+	        		sb.setStockSymbol(stockSymbol);
+	        		sb.setLastPrice(lastTradedPrice);
+	        		recommendedBuy.add(sb);
+	        		
+	        	}
+	        }
+		}
+		recommendedBuySell.put("BUY", recommendedBuy);
+		recommendedBuySell.put("SELL", recommendedSell);
+		return recommendedBuySell;
 	}
 }

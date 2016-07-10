@@ -5,6 +5,8 @@ import javax.servlet.http.*;
 import java.io.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+
+import com.stocks.scheduled.jobs.BuySellTask;
 import com.stocks.scheduled.jobs.MyStockTask;
 import java.util.Date;
 import java.util.Timer;
@@ -32,9 +34,13 @@ public class LiveStocksMonitoring extends HttpServlet {
 			// 1 minute = 60 seconds = 60,000 milli seconds
 			// 10 minutes = 600 seconds = 600,000
 			timer.scheduleAtFixedRate(new MyStockTask(), date, 1800000);
-			System.out.println("Live Stocks monitoring has started!");			
+			System.out.println("3% Live Stocks monitoring has started!");
+
+			Timer timer2 = new Timer();
+			timer2.scheduleAtFixedRate(new BuySellTask(), date, 120000);
+			System.out.println("3% Buy and Sell Stocks monitoring has started!");
 		} catch (Exception ex){
-			System.out.println("Exception: " + ex.getMessage());
+			System.out.println("3% Exception: " + ex.getMessage());
 		}
 		RequestDispatcher view = request.getRequestDispatcher("LiveStocksMonitoring.jsp");
 		view.forward(request,response);

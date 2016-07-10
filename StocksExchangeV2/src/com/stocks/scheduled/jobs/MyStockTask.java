@@ -41,7 +41,7 @@ public class MyStockTask extends TimerTask {
 			System.out.println("Live Stocks Monitoring is done!");
 		} else {
 			System.out.println("Interval " + ctr);
-			sb.stocksMonitoring(tradingDate);
+			sb.sendStocksUpdates(tradingDate);
 		}
 		
 	}

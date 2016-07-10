@@ -1,5 +1,6 @@
 package com.stocks.model.dao;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 import com.stocks.model.Stock;
@@ -12,4 +13,5 @@ public interface StocksDao {
 	public List<Stock> getAllStocks();
 	public int removeData(String tradingDate);
 	public Map<String,Object> getHistoricalData();
+	public Map<String,BigDecimal> getBuySellStocks();
 }

@@ -2,10 +2,8 @@ package com.stocks.model;
 import java.math.BigDecimal;
 import java.util.Date;
 
-public class Stock {
-	private String stockSymbol;
+public class Stock extends StockBase {
 	private BigDecimal stockValue;
-	private double lastPrice;
 	private int frequency;
 	private Date closingDate;
 	private Date latestMostActive;
@@ -15,23 +13,11 @@ public class Stock {
 	private double high;
 	private BigDecimal totalStockValue;
 
-	public String getStockSymbol() {
-		return stockSymbol;
-	}
-	public void setStockSymbol(String stockSymbol) {
-		this.stockSymbol = stockSymbol;
-	}
 	public BigDecimal getStockValue() {
 		return stockValue;
 	}
 	public void setStockValue(BigDecimal stockValue) {
 		this.stockValue = stockValue;
-	}
-	public double getLastPrice() {
-		return lastPrice;
-	}
-	public void setLastPrice(double lastPrice) {
-		this.lastPrice = lastPrice;
 	}
 	public int getFrequency(){
 		return frequency;

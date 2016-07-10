@@ -477,4 +477,36 @@ public class StocksDaoImpl implements StocksDao{
 		  }
 		  return historicalMap;
 	}
+
+	public Map<String,BigDecimal> getBuySellStocks() {
+		  Connection conn = null;
+		  Map<String,BigDecimal> buySellStocks = new HashMap<String,BigDecimal>();
+		  try {
+			  DBConnection db = new DBConnection();
+			  conn = db.getConnection();
+
+			  String sql = "SELECT stock_symbol, buy_price, sell_price "
+				  + "FROM buy_sell_stocks_v2 "
+				  + "WHERE is_enabled = ? "
+				  + "AND is_deleted = ? ";
+			  
+			  PreparedStatement prest = conn.prepareStatement(sql);
+			  prest.setString(1, "Y");
+			  prest.setString(2, "N");
+			  ResultSet rs = prest.executeQuery();
+			  while (rs.next()){
+				  String stockSymbol = rs.getString(1);
+				  double buyPrice = rs.getDouble(2);
+				  double sellPrice = rs.getDouble(3);
+				  buySellStocks.put(stockSymbol+"_SELL",new BigDecimal(sellPrice));
+				  buySellStocks.put(stockSymbol+"_BUY",new BigDecimal(buyPrice));
+			  }
+			  rs.close();
+			  prest.close();
+			  conn.close();
+		  } catch (Exception e) {
+			  e.printStackTrace();
+		  }
+		  return buySellStocks;
+	}
 }

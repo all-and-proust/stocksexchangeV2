@@ -21,7 +21,7 @@ public class StocksUpdatesTest {
 		} else {
 			System.out.println("Import of stocks data has failed.");
 		}
-		sb.sendStocksUpdates();
+		sb.sendStocksUpdates("2016-07-01");
 
 	}
 
