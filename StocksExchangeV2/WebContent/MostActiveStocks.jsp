@@ -4,6 +4,12 @@
 	<title>Most Active Stocks</title>
 </head>
 <body>
+<a href="LiveStocksMonitoring.do">Start Live Stocks Monitoring!</a> | 
+<a href="DataImport.do">Import Data From CSV!</a> | 
+<a href="DataImportPSEView.do">Import Data Directly from PSE!</a> | 
+<a href="AllStocks.do">View All Stocks With Frequency</a>
+<br/>
+<br/>
 <b>Most Active Stocks In The Last 10 Trading Days</b>
 <br/>
 <br/>
@@ -44,14 +50,5 @@
 	}
 	%>
 </table>
-<br/>
-<br/>
-<a href="LiveStocksMonitoring.do">Start Live Stocks Monitoring!</a>
-<br/>
-<a href="DataImport.do">Import Data From CSV!</a>
-<br/>
-<a href="DataImportPSEView.do">Import Data Directly from PSE!</a>
-<br/>
-<a href="AllStocks.do">View All Stocks With Frequency</a>
 </body>
 </html>
