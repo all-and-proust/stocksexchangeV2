@@ -29,9 +29,6 @@ public class BuySellTask extends TimerTask {
 			recessDate = dateFormatter.parse(recessTime);
 			String resumeTime = tradingDate + " 13:30:00";
 			resumeDate = dateFormatter.parse(resumeTime);
-
-			System.out.println("3% Trading Date: " + tradingDate);
-			System.out.println("3% End Time: " + endTime);
 		} catch (Exception ex){
 			System.out.println("3% Exception: " + ex.getMessage());
 		}
@@ -52,10 +49,10 @@ public class BuySellTask extends TimerTask {
 				}
 			}
 			if(buySell.get("SELL").isEmpty()){
-				System.out.println("No best sell!");
+				System.out.println("3% No best sell!");
 			} else {
 				List<StockBase> buyStocks = buySell.get("SELL");
-				System.out.println("Recommended stocks to SELL: ");
+				System.out.println("3% Recommended stocks to SELL: ");
 				for(StockBase s: buyStocks){
 					System.out.println("(3%) " + s.getStockSymbol() + ": " + s.getLastPrice());
 				}
