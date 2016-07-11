@@ -14,6 +14,8 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.Date;
 import java.util.StringTokenizer;
+
+import com.stocks.model.BuySellStock;
 import com.stocks.model.DBConnection;
 import com.stocks.model.Stock;
 import com.stocks.model.dao.StocksDao;
@@ -508,5 +510,89 @@ public class StocksDaoImpl implements StocksDao{
 			  e.printStackTrace();
 		  }
 		  return buySellStocks;
+	}
+
+	public List<BuySellStock> getPriceAlert(String isEnabled, String isDeleted){
+		  Connection conn = null;
+		  List<BuySellStock> priceAlerts = new ArrayList<BuySellStock>();
+		  try {
+			  DBConnection db = new DBConnection();
+			  conn = db.getConnection();
+
+			  String sql = "SELECT id, stock_symbol, buy_price, sell_price, created_date "
+				  + "FROM buy_sell_stocks_v2 "
+				  + "WHERE is_enabled = ? "
+				  + "AND is_deleted = ? "
+				  + "ORDER BY stock_symbol";
+			  
+			  PreparedStatement prest = conn.prepareStatement(sql);
+			  prest.setString(1, isEnabled);
+			  prest.setString(2, isDeleted);
+			  ResultSet rs = prest.executeQuery();
+			  while (rs.next()){
+				  BuySellStock buySellStock = new BuySellStock();
+				  buySellStock.setId(rs.getLong(1));
+				  buySellStock.setStockSymbol(rs.getString(2));
+				  buySellStock.setBuyPrice(rs.getDouble(3));
+				  buySellStock.setSellPrice(rs.getDouble(4));
+				  buySellStock.setCreateDate(rs.getDate(5));
+				  priceAlerts.add(buySellStock);
+			  }
+			  rs.close();
+			  prest.close();
+			  conn.close();
+		  } catch (Exception e) {
+			  e.printStackTrace();
+		  }
+		return priceAlerts;
+	}
+	
+	public void updatePriceAlert(long id, String isEnabled, String isDeleted){
+		Connection conn = null;
+		try
+      {
+			DBConnection db = new DBConnection();
+			conn = db.getConnection();
+			
+			String sql = "UPDATE buy_sell_stocks_v2 "
+					+ "SET is_enabled = ?, is_deleted = ?, modified_date = SYSDATE "
+					+ "WHERE id = ? ";
+			PreparedStatement prest = conn.prepareStatement(sql);
+			prest.setString(1, isEnabled);
+			prest.setString(2, isDeleted);
+			prest.setLong(3, id);
+			prest.executeUpdate();
+			prest.close();
+
+			conn.close();
+		}
+      catch(Exception e)
+      {
+              System.out.println("Exception while updating buy and sell records: " + e.getMessage());
+      }
+	}
+	
+	public void addPriceAlert(String stockSymbol, double buyPrice, double sellPrice){
+		Connection conn = null;
+		try
+      {
+			DBConnection db = new DBConnection();
+			conn = db.getConnection();
+			
+			String sql = "INSERT INTO buy_sell_stocks_v2(id, stock_symbol, buy_price, sell_price, created_date) "
+					+ "VALUES(BUY_SELL_STOCKS_V2_SEQ.NEXTVAL, ?, ?, ?, SYSDATE) ";
+			PreparedStatement prest = conn.prepareStatement(sql);
+			prest.setString(1, stockSymbol);
+			prest.setDouble(2, buyPrice);
+			prest.setDouble(3, sellPrice);
+			prest.executeUpdate();
+			prest.close();
+
+			conn.close();
+		}
+      catch(Exception e)
+      {
+              System.out.println("Exception while updating buy and sell records: " + e.getMessage());
+      }
 	}
 }
