@@ -1,12 +1,104 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd" id="WebApp_ID" version="3.0">
   <display-name>PhilippineStockExchangeV2</display-name>
-  <welcome-file-list>
-    <welcome-file>index.html</welcome-file>
-    <welcome-file>index.htm</welcome-file>
-    <welcome-file>index.jsp</welcome-file>
-    <welcome-file>default.html</welcome-file>
-    <welcome-file>default.htm</welcome-file>
-    <welcome-file>default.jsp</welcome-file>
-  </welcome-file-list>
+<servlet>
+	<servlet-name>Most Active</servlet-name>
+	<servlet-class>com.stocks.web.MostActive</servlet-class>
+</servlet>
+
+<servlet>
+	<servlet-name>Historical Data</servlet-name>
+	<servlet-class>com.stocks.web.HistoricalData</servlet-class>
+</servlet>
+
+<servlet>
+	<servlet-name>Analyze Stock</servlet-name>
+	<servlet-class>com.stocks.web.AnalyzeStock</servlet-class>
+</servlet>
+
+<servlet>
+	<servlet-name>Data Import</servlet-name>
+	<servlet-class>com.stocks.web.DataImport</servlet-class>
+</servlet>
+
+<servlet>
+	<servlet-name>All Stocks</servlet-name>
+	<servlet-class>com.stocks.web.AllStocks</servlet-class>
+</servlet>
+
+<servlet>
+	<servlet-name>Data Import PSE View</servlet-name>
+	<servlet-class>com.stocks.web.DataImportPSEView</servlet-class>
+</servlet>
+
+<servlet>
+	<servlet-name>Data Import PSE</servlet-name>
+	<servlet-class>com.stocks.web.DataImportPSE</servlet-class>
+</servlet>
+
+<servlet>
+	<servlet-name>Live Stocks Monitoring</servlet-name>
+	<servlet-class>com.stocks.web.LiveStocksMonitoring</servlet-class>
+</servlet>
+
+<servlet>
+	<servlet-name>Price Alert</servlet-name>
+	<servlet-class>com.stocks.web.PriceAlert</servlet-class>
+</servlet>
+
+<servlet-mapping>
+	<servlet-name>Most Active</servlet-name>
+	<url-pattern>/MostActive.do</url-pattern>
+</servlet-mapping>
+
+<servlet-mapping>
+	<servlet-name>Historical Data</servlet-name>
+	<url-pattern>/HistoricalData.do</url-pattern>
+</servlet-mapping>
+
+<servlet-mapping>
+	<servlet-name>Analyze Stock</servlet-name>
+	<url-pattern>/AnalyzeStock.do</url-pattern>
+</servlet-mapping>
+
+<servlet-mapping>
+	<servlet-name>Data Import</servlet-name>
+	<url-pattern>/DataImport.do</url-pattern>
+</servlet-mapping>
+
+<servlet-mapping>
+	<servlet-name>All Stocks</servlet-name>
+	<url-pattern>/AllStocks.do</url-pattern>
+</servlet-mapping>
+
+<servlet-mapping>
+	<servlet-name>Data Import PSE View</servlet-name>
+	<url-pattern>/DataImportPSEView.do</url-pattern>
+</servlet-mapping>
+
+<servlet-mapping>
+	<servlet-name>Data Import PSE</servlet-name>
+	<url-pattern>/DataImportPSE.do</url-pattern>
+</servlet-mapping>
+
+<servlet-mapping>
+	<servlet-name>Live Stocks Monitoring</servlet-name>
+	<url-pattern>/LiveStocksMonitoring.do</url-pattern>
+</servlet-mapping>
+
+<servlet-mapping>
+	<servlet-name>Price Alert</servlet-name>
+	<url-pattern>/PriceAlert.do</url-pattern>
+</servlet-mapping>
+
+<resource-ref>
+  <res-ref-name>jdbc/UCPPool6</res-ref-name>
+  <res-type>javax.sql.DataSource</res-type>
+  <res-auth>Container</res-auth>
+</resource-ref>
+
+<welcome-file-list>
+	<welcome-file>MostActive.do</welcome-file>
+</welcome-file-list>
+
 </web-app>
