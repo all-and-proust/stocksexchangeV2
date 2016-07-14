@@ -22,13 +22,13 @@ public class LiveStocksMonitoring extends HttpServlet {
 			String tradingDate = dateFormatter2.format(new Date());
 			
 			String startTime = tradingDate + " 09:35:00";//this line is original. put this back after testing.
-			//String startTime = tradingDate + " 13:55:00";// this line is for testing only.
+			//String startTime = tradingDate + " 11:35:00";// this line is for testing only.
 			Date date = dateFormatter.parse(startTime);
 
 			Timer timer = new Timer();
 			
-			System.out.println("Trading Date: " + tradingDate);
-			System.out.println("Start Time: " + startTime);
+			System.out.println("3% Trading Date: " + tradingDate);
+			System.out.println("3% Start Time: " + startTime);
 			//timer.schedule(new MyStockTask(), date, 10000);
 			// 1 second = 1,000 milli seconds
 			// 1 minute = 60 seconds = 60,000 milli seconds

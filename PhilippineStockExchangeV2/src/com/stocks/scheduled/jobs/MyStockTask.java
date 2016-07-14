@@ -28,19 +28,16 @@ public class MyStockTask extends TimerTask {
 			recessDate = dateFormatter.parse(recessTime);
 			String resumeTime = tradingDate + " 13:26:00";
 			resumeDate = dateFormatter.parse(resumeTime);
-
-			System.out.println("Trading Date: " + tradingDate);
-			System.out.println("End Time: " + endTime);
 		} catch (Exception ex){
-			System.out.println("Exception: " + ex.getMessage());
+			System.out.println("3% Exception: " + ex.getMessage());
 		}
 		if(new Date().getTime() > recessDate.getTime() && new Date().getTime() < resumeDate.getTime()){
-			System.out.println("Recess Time!");
+			System.out.println("3% Recess Time!");
 		} else if(new Date().getTime() > date1.getTime()){
 			cancel();
-			System.out.println("Live Stocks Monitoring is done!");
+			System.out.println("3% Live Stocks Monitoring is done!");
 		} else {
-			System.out.println("Interval " + ctr);
+			System.out.println("3% Interval " + ctr);
 			sb.sendStocksUpdates(tradingDate);
 		}
 		

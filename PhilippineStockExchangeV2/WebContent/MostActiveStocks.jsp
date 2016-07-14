@@ -5,7 +5,6 @@
 </head>
 <body>
 <a href="PriceAlert.do">Price Alert</a> | 
-<a href="LiveStocksMonitoring.do">Start Live Stocks Monitoring!</a> | 
 <a href="DataImport.do">Import Data From CSV!</a> | 
 <a href="DataImportPSEView.do">Import Data Directly from PSE!</a> | 
 <a href="AllStocks.do">View All Stocks With Frequency</a>
@@ -51,5 +50,8 @@
 	}
 	%>
 </table>
+<br/>
+<br/>
+<a href="LiveStocksMonitoring.do">Start Live Stocks Monitoring!</a> 
 </body>
 </html>
