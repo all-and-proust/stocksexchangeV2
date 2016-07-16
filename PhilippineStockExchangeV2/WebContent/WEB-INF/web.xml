@@ -46,6 +46,11 @@
 	<servlet-class>com.stocks.web.PriceAlert</servlet-class>
 </servlet>
 
+<servlet>
+	<servlet-name>Real Time Monitoring</servlet-name>
+	<servlet-class>com.stocks.web.RealTimeMonitoring</servlet-class>
+</servlet>
+
 <servlet-mapping>
 	<servlet-name>Most Active</servlet-name>
 	<url-pattern>/MostActive.do</url-pattern>
@@ -89,6 +94,11 @@
 <servlet-mapping>
 	<servlet-name>Price Alert</servlet-name>
 	<url-pattern>/PriceAlert.do</url-pattern>
+</servlet-mapping>
+
+<servlet-mapping>
+	<servlet-name>Real Time Monitoring</servlet-name>
+	<url-pattern>/RealTimeMonitor.do</url-pattern>
 </servlet-mapping>
 
 <resource-ref>

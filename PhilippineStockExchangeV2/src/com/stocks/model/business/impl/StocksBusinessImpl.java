@@ -1,13 +1,17 @@
 package com.stocks.model.business.impl;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.net.URL;
 import java.net.URLConnection;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -15,6 +19,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.StringTokenizer;
 
 import javax.mail.Message;
 import javax.mail.MessagingException;
@@ -23,6 +28,7 @@ import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
+import com.stocks.model.BuySellStock;
 import com.stocks.model.GMailAuthenticator;
 import com.stocks.model.Stock;
 import com.stocks.model.StockBase;
@@ -88,16 +94,16 @@ public class StocksBusinessImpl implements StocksBusiness {
 	
 	public void sendStocksUpdates(String tradingDate){
 		StocksDao sd = new StocksDaoImpl();
-		sd.removeData(tradingDate);
+		sd.removeStocksData(tradingDate);
 		List<Map<String,String>> stocksList = viewDataFromPSE();
-		int importResult = sd.importData(stocksList);
+		int importResult = sd.importLiveData(stocksList, 1, 50);
 		if(importResult == 0){
 			System.out.println("Successfully imported stocks data.");
 		} else {
 			System.out.println("Import of stocks data has failed.");
 		}
 		
-		String tableData = buildBestBuyData(sd.getHighFrequencyStocks());
+		String tableData = buildBestBuyData(getHighFrequencyStocks(true, 1, 10));
 		
 		Map<String,List<StockBase>> buySell= adviseBuySell(stocksList);
 		
@@ -248,5 +254,229 @@ public class StocksBusinessImpl implements StocksBusiness {
 		recommendedBuySell.put("BUY", recommendedBuy);
 		recommendedBuySell.put("SELL", recommendedSell);
 		return recommendedBuySell;
+	}
+
+	public List<Stock> getAllStocks(){
+		StocksDao sd = new StocksDaoImpl();
+		return sd.getAllPSEStocks();
+	}
+	
+	public Map<String,Object> importData(){
+		StocksDao sd = new StocksDaoImpl();
+		Map<String,Object> resultsMap = new HashMap<String,Object>();
+        try
+        {
+			  File directory = new File("C:/stocksdatafeed/csv/in");
+			  File[] myarray;  
+			  myarray=directory.listFiles();
+			  for (int j = 0; j < myarray.length; j++)
+			  {
+			         File path=myarray[j];
+			         FileReader fr = new FileReader(path);
+			         BufferedReader br = new BufferedReader(fr);
+			         String strLine = "";
+			         StringTokenizer st = null;
+			         int lineNumber = 0, tokenNumber = 0;
+               
+			         //read comma separated file line by line
+			         while( (strLine = br.readLine()) != null)
+			         {
+                        lineNumber++;
+                       
+                        if(lineNumber == 1)
+                        	continue;
+                        //break comma separated line using ","
+                        st = new StringTokenizer(strLine, ",");
+                       
+                        String symbol = null;
+                        double lastPrice = 0.0;
+                        long stockValue = 0;
+                        String tradingDate = null;
+                        while(st.hasMoreTokens())
+                        {
+                                //display csv values
+                                tokenNumber++;
+                                String nextToken = st.nextToken();
+                                if(tokenNumber == 1)
+                                	continue;
+                                
+                                if(tokenNumber == 5){
+                                	String[] nextTokenArr = nextToken.split("/");
+                                	if(nextTokenArr.length > 1){
+                                		nextToken = nextTokenArr[2] + "-" + nextTokenArr[0] +"-" + nextTokenArr[1];
+                                		tradingDate = nextToken;
+                                	}
+                                }
+                                
+                                if(tokenNumber == 2){
+                                	symbol = nextToken;
+                                } else if(tokenNumber == 3){
+                                	lastPrice = Double.parseDouble(nextToken);
+                                } else if(tokenNumber == 4){
+                                	stockValue = Long.parseLong(nextToken);
+                                }
+                        }
+                       
+                        //reset token number
+                        tokenNumber = 0;
+                        
+                        sd.importStocksData(symbol, lastPrice, tradingDate);
+			         }
+			         br.close(); //release the resources
+					 break;//we want only to process the first file.
+			  }
+
+			  //move the read files to archive directory
+			  if(myarray.length == 0){
+				resultsMap.put("message","No Data to import. Data File not found.");
+			  }
+
+			  for (int j = 0; j < myarray.length; j++)
+			  {
+			    File file=myarray[j];
+
+			  	// Destination directory
+			  	File dir = new File("C:/stocksdatafeed/csv/archive");
+
+			  	// Move file to new directory
+			  	boolean success = file.renameTo(new File(dir, file.getName()));
+			  	if (!success) {
+			  		resultsMap.put("message",file.getName() + " was not imported successfully!");
+			  	} else {
+					resultsMap.put("message",file.getName() + " was imported successfully!");
+				}
+				
+				break;//process only single file
+			  }
+        }
+        catch(Exception e)
+        {
+                System.out.println("Exception while reading csv file: " + e);                  
+        }
+        return resultsMap;
+	}
+
+	public int importData(List<Map<String,String>> stocksList, int lowRange, int highRange){
+		StocksDao sd = new StocksDaoImpl();
+		return sd.importLiveData(stocksList, lowRange, highRange);
+	}
+
+	public int removeData(String tradingDate){
+		StocksDao sd = new StocksDaoImpl();
+		return sd.removeStocksData(tradingDate);
+	}
+
+	public Map<String,Object> getHistoricalData(String symbol, int lowRange, int highRange){
+		StocksDao sd = new StocksDaoImpl();
+		return sd.getPSEHistoricalData(symbol, lowRange, highRange);
+	}
+	
+	public void updatePriceAlert(long id, String isEnabled, String isDeleted){
+		StocksDao sd = new StocksDaoImpl();
+		sd.updateBuySellStocks(id, isEnabled, isDeleted);
+	}
+	
+	public List<BuySellStock> getPriceAlert(String isEnabled, String isDeleted){
+		StocksDao sd = new StocksDaoImpl();
+		return sd.getBuySellStocks(isEnabled, isDeleted);
+	}
+	
+	public void addPriceAlert(String stockSymbol, double buyPrice, double sellPrice){
+		StocksDao sd = new StocksDaoImpl();
+		sd.addBuySellStock(stockSymbol, buyPrice, sellPrice);
+	}
+	
+	public List<Stock> getHighFrequencyStocks(boolean isFullData, int lowRange, int highRange) {
+		StocksDao sd = new StocksDaoImpl();
+		List<Stock> stocks = sd.getHighFrequencyStocks(lowRange, highRange);
+		if(isFullData){
+			Map<String, Object> historicalmap = sd.getHistoricalData(lowRange, highRange);
+			int rank = 0;
+			for(Stock stock: stocks){
+				rank = rank + 1;
+				stock.setRank(rank);
+				Date latestMostActive = (Date) historicalmap.get(stock.getStockSymbol()+"latestMostActive");
+				stock.setLatestMostActive(latestMostActive);
+				List<Stock> stocksList = (List<Stock>)historicalmap.get(stock.getStockSymbol());
+				int ctr = 0;
+				double low1 = 0.0;
+				double high1 = 0.0;
+				double cps = 0.0;
+				for(Stock s: stocksList){
+					ctr++;
+					if(ctr == 1){
+						low1 = s.getLastPrice();
+					}
+					if(ctr == stock.getFrequency()){
+						high1 = s.getLastPrice();
+					}
+					if(latestMostActive.getTime() == s.getClosingDate().getTime()){
+						cps = s.getLastPrice();
+					}
+				}
+				double targetprice = cps * 1.03;
+				BigDecimal howClose = new BigDecimal(-1);
+				if(high1 != low1)
+					howClose = new BigDecimal((targetprice-low1)/(high1-low1) * 100).setScale(2, RoundingMode.CEILING);
+				stock.setPercentHowClose(howClose);
+				stock.setHigh(high1);
+				stock.setLow(low1);
+				stock.setLastPrice(cps);
+				stock.setTargetPrice(new BigDecimal(targetprice).setScale(2, RoundingMode.CEILING));
+			}
+			return stocks;
+		} else {
+			return stocks;
+		}
+	}
+
+	public void refreshMostActiveStocks(List<Stock> mostActiveStocks, List<Map<String,String>> freshStocks){		
+		Map<String,Double> freshStockMap = new HashMap<String,Double>();
+		String tradingDateStr = "";
+		Date tradingDate = null;
+		//loop through the fresh stocks
+		for(Map<String,String> sds : freshStocks){
+			if(sds.get("lastTradedPrice").equals("DATE")){
+				String[] nextTokenArr = sds.get("securityAlias").substring(0, 10).split("/");
+				if(nextTokenArr.length > 1){
+					tradingDateStr = nextTokenArr[2] + "-" + nextTokenArr[0] +"-" + nextTokenArr[1];
+				}
+	        } else {	        	
+	        	String stockSymbol = sds.get("securitySymbol");
+	        	double lastTradedPrice = Double.parseDouble(sds.get("lastTradedPrice"));
+	        	freshStockMap.put(stockSymbol, lastTradedPrice);
+	        }
+		}
+		
+		DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+		try{
+			tradingDate = formatter.parse(tradingDateStr);
+			for(Stock mostActiveStock: mostActiveStocks){
+				if(freshStockMap.get(mostActiveStock.getStockSymbol())!=null){
+					double lastPrice = freshStockMap.get(mostActiveStock.getStockSymbol()).doubleValue();
+					
+					mostActiveStock.setLastPrice(lastPrice);
+					double low1 = (lastPrice < mostActiveStock.getLow()) ? lastPrice : mostActiveStock.getLow();
+					mostActiveStock.setLow(low1);
+					double high1 = (lastPrice > mostActiveStock.getHigh()) ? lastPrice : mostActiveStock.getHigh();
+					mostActiveStock.setHigh(high1);
+					double targetprice = lastPrice * 1.03;
+					mostActiveStock.setTargetPrice(new BigDecimal(targetprice).setScale(2, RoundingMode.CEILING));
+					BigDecimal howClose = new BigDecimal(-1);
+					if(high1 != low1){
+						howClose = new BigDecimal((targetprice-low1)/(high1-low1) * 100).setScale(2, RoundingMode.CEILING);
+					}
+					mostActiveStock.setPercentHowClose(howClose);
+					
+					if(mostActiveStock.getLatestMostActive().getTime() != tradingDate.getTime()){
+						int frequency = mostActiveStock.getFrequency();
+						mostActiveStock.setFrequency(frequency + 1);
+						mostActiveStock.setLatestMostActive(tradingDate);
+					}					
+				}
+			}
+		} catch (ParseException ex){
+			System.out.println("Error parsing trading date.");
+		}
 	}
 }

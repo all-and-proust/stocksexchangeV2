@@ -78,7 +78,7 @@ public class StockScore {
 	public StockScore computeMe(){
 		this.totalCost = this.costPerShare * this.numShare;
 		this.totalTargetCost = this.totalCost * ROI;
-		this.sellAt = this.totalTargetCost / this.numShare;
+		this.sellAt = this.costPerShare * ROI;
 		this.totalProfit = this.totalTargetCost - this.totalCost - BUY_SELL_CHARGE;
 		this.howClose = ((this.sellAt-this.low)/(this.high-this.low)) * 100;
 		

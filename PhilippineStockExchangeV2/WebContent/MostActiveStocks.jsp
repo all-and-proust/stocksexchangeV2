@@ -4,6 +4,7 @@
 	<title>Most Active Stocks</title>
 </head>
 <body>
+<a href="RealTimeMonitoring.jsp">Real-time Stocks Monitoring</a> | 
 <a href="PriceAlert.do">Price Alert</a> | 
 <a href="DataImport.do">Import Data From CSV!</a> | 
 <a href="DataImportPSEView.do">Import Data Directly from PSE!</a> | 

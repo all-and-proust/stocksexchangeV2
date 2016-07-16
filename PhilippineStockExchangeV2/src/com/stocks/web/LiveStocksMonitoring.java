@@ -1,8 +1,6 @@
 package com.stocks.web;
 
-import javax.servlet.*;
-import javax.servlet.http.*;
-import java.io.*;
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
@@ -10,6 +8,12 @@ import com.stocks.scheduled.jobs.BuySellTask;
 import com.stocks.scheduled.jobs.MyStockTask;
 import java.util.Date;
 import java.util.Timer;
+
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 public class LiveStocksMonitoring extends HttpServlet {
 
@@ -22,7 +26,7 @@ public class LiveStocksMonitoring extends HttpServlet {
 			String tradingDate = dateFormatter2.format(new Date());
 			
 			String startTime = tradingDate + " 09:35:00";//this line is original. put this back after testing.
-			//String startTime = tradingDate + " 11:35:00";// this line is for testing only.
+			//String startTime = tradingDate + " 10:45:00";// this line is for testing only.
 			Date date = dateFormatter.parse(startTime);
 
 			Timer timer = new Timer();
